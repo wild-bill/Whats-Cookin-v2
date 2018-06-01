@@ -131,28 +131,52 @@ function getSimilarRecipesTest($ingredientString){
 	# the right item in the array...revisit this
 	for($counter=0; $counter<$numberOfRecipes; $counter++){
 		#print_r($recipes[$counter]->title);
-		$otherRecipes[] = $recipes[$counter]->title;
-		echo "\n";
+		$otherRecipes[$counter]['recipe_id'] = $recipes[$counter]->id;
+		$otherRecipes[$counter]['recipe_name'] = $recipes[$counter]->title;
+		
+		
+		#echo "\n";
 	}
+	
+	
 
 	return $otherRecipes;
 	
 }
 
+/* For now I am just going to use this to return the link */
+function getRecipeWebsite($id){
+	$response = Unirest\Request::get('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/'.$id.'/information?includeNutrition=false',
+  array(
+    "X-Mashape-Key" => "cRWKW5XML6mshRcU0OjwWDuF9k4fp1GmpVqjsnZmfp3yTZ2gsy",
+    "Accept" => "application/json"
+  		)
+	);
+	
+	return $response->body->sourceUrl; 
+
+
+}
 
 function printRecipeName($recipes){
 	if(isset($recipes->body->recipes[0]->title)){
-		#echo "yes yes yes"; #for debugging
+		echo "yes yes yes"; #for debugging
 		for ($counter=0; $counter < count(recipes); $counter++){
 		print_r($recipes->body->recipes[0]->title);
 		}
 	}
+	
 	else{
-		#echo "no no no!"; #for debugging
-		for ($counter=0; $counter < count($recipes); $counter++){
-			echo $recipes[$counter];
-			echo "\n";	
-		}
+		#echo "no no no"; #for debugging
+		foreach($recipes as $recipeInfoArray){
+			#print_r($recipeInfoArray);
+			echo($recipeInfoArray['recipe_name']);
+			echo("\n");
+			echo(getRecipeWebsite($recipeInfoArray['recipe_id']));
+			echo("\n");
+		
+    	}
+		
 	}
 
 	
@@ -181,6 +205,7 @@ $ingredients =  getIngredients($randomRecipe);
 $ingredientString = createIngredientString($ingredients);
 echo $ingredientString;
 $similarRecipes = getSimilarRecipesTest($ingredientString);
+# print for debugging
 print_r($similarRecipes);
 #echo count($similarRecipes);
 printRecipeName($similarRecipes);
