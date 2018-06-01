@@ -183,5 +183,5 @@ echo $ingredientString;
 $similarRecipes = getSimilarRecipesTest($ingredientString);
 print_r($similarRecipes);
 #echo count($similarRecipes);
-#printRecipeName($similarRecipes);
+printRecipeName($similarRecipes);
 #echo $similarRecipes;
